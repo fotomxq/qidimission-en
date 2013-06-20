@@ -1,0 +1,29 @@
+#message{
+    cursor:pointer;
+}
+#data-table th,#data-table td{
+    line-height: 40px;
+}
+#data-table td{
+    width:50%;
+}
+#data-table tr{
+    cursor: pointer;
+}
+
+#table-view-word,#table-edit-word{
+    min-width: 700px;
+}
+#table-view-word img{
+    max-height: 150px;
+    max-width: 150px;
+}
+#table-view-word dt,#table-view-word dd,#table-edit-word dt,#table-edit-word dd{
+    padding: 5px;
+}
+#table-edit-word .dl-horizontal dt{
+    width: 50px;
+}
+#table-edit-word .dl-horizontal dd{
+    margin-left:80px;
+}
