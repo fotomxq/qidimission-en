@@ -2,7 +2,7 @@
 /**
  * 课堂模式页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package page
  */
 /**
@@ -82,8 +82,6 @@ if ($show_mode == $show_mode_arr[2]) {
  */
 //例句显示个数
 $dict_num = isset($_GET['dict-num']) == true ? Math . abs($_GET['dict-num']) : 1;
-//无图提示图像序列
-$noimg_arr = array('includes/img/noimg_01.png', 'includes/img/noimg_02.png', 'includes/img/noimg_03.png', 'includes/img/noimg_04.png');
 
 /**
  * URL
@@ -152,18 +150,14 @@ $url_next = $url . '&offset=' . $next_offset . $next_review . '&show=' . $show_m
     <div class="row">
         <?php if(($show_mode == $show_mode_arr[2] || $show_mode == $show_mode_arr[1]) && $word_infos !== null){ ?>
         <div class="span4">
-            <?php if($word_infos['img']){ ?>
-            <img src="<?php echo $word_infos['img']; ?>" class="img-polaroid info-img">
-            <?php }else{ $img_src_key = array_rand($noimg_arr); ?>
-            <img src="<?php echo $noimg_arr[$img_src_key]; ?>" class="img-polaroid info-img">
-            <?php } ?>
+            <img src="do_img.php?word=<?php echo $word_infos['word']; ?>" class="img-polaroid info-img">
         </div>
         <div class="span8 text-left">
             <?php if($word_infos['des']){ foreach($word_infos['des'] as $v){ ?>
             <p class="info-des"><?php echo $v['p'].'&nbsp;&nbsp;'.$v['d']; ?></p>
             <?php } } ?>
             <p>&nbsp;</p>
-            <?php if($word_infos['dict']){ $dict_keys = array_rand($noimg_arr,$dict_num); if(is_array($dict_keys) == true){ foreach($dict_keys as $v){ ?>
+            <?php if($word_infos['dict']){ $dict_keys = array_rand($word_infos['dict'],$dict_num); if(is_array($dict_keys) == true){ foreach($dict_keys as $v){ ?>
             <p class="info-dict"><?php if(isset($word_infos['dict'][$v]['en']) == true) echo $word_infos['dict'][$v]['en']; ?></p>
             <p class="info-dict"><?php if(isset($word_infos['dict'][$v]['zh']) == true) echo '&nbsp;&nbsp;'.$word_infos['dict'][$v]['zh']; ?></p>
             <?php } }else{ ?>

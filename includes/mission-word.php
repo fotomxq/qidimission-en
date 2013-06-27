@@ -3,7 +3,7 @@
 /**
  * 获取单词信息
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package mission
  */
 class MissionWord {
@@ -153,36 +153,39 @@ class MissionWord {
         try {
             if ($src == '') {
                 $src = DIR_LIB . DS . 'img' . DS . 'noimg_0' . rand(1, 4) . '.png';
-            }
-            $srcSize = getimagesize($src);
-            $img = null;
-            switch ($srcSize[2]) {
-                case 1:
-                    $img = imagecreatefromgif($src);
-                    break;
-                case 2:
-                    $img = imagecreatefromjpeg($src);
-                    break;
-                case 3:
-                    $img = imagecreatefrompng($src);
-                    break;
-                case 6:
-                    $img = imagecreatefromwbmp($src);
-                    break;
-            }
-            if ($img !== null) {
-                //如果是本地图库
-                if (substr($src, 8, 9) == 'word-imgs') {
-                    $newW = 209;
-                    $newH = $srcSize[1] - 355;
-                    $newImg = imagecreatetruecolor($newW, $newH);
-                    imagecopy($newImg, $img, 0, 0, 31, 31, $newW, $newH);
-                    $img = $newImg;
-                }
-                //输出图片
                 header("Content-type: image/png;charset=utf-8");
-                imagepng($img);
-                imagedestroy($img);
+                echo file_get_contents($src);
+            } else {
+                $srcSize = getimagesize($src);
+                $img = null;
+                switch ($srcSize[2]) {
+                    case 1:
+                        $img = imagecreatefromgif($src);
+                        break;
+                    case 2:
+                        $img = imagecreatefromjpeg($src);
+                        break;
+                    case 3:
+                        $img = imagecreatefrompng($src);
+                        break;
+                    case 6:
+                        $img = imagecreatefromwbmp($src);
+                        break;
+                }
+                if ($img !== null) {
+                    //如果是本地图库
+                    if (substr($src, 8, 9) == 'word-imgs') {
+                        $newW = 209;
+                        $newH = $srcSize[1] - 355;
+                        $newImg = imagecreatetruecolor($newW, $newH);
+                        imagecopy($newImg, $img, 0, 0, 31, 31, $newW, $newH);
+                        $img = $newImg;
+                    }
+                    //输出图片
+                    header("Content-type: image/png;charset=utf-8");
+                    imagepng($img);
+                    imagedestroy($img);
+                }
             }
         } catch (Exception $e) {
             
@@ -324,6 +327,7 @@ class MissionWord {
                 if ($vArr && count($vArr) == $len) {
                     $vStr = '';
                     foreach ($vArr as $valV) {
+                        $valV = str_replace('|', '-', $valV);
                         $vStr .= '|' . $valV;
                     }
                     $vStr = substr($vStr, 1);
