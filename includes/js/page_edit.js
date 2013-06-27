@@ -41,7 +41,6 @@ edit.table_name = "#data-table";
 edit.tip_name = "#data-tip";
 edit.tip_a_name = "a[href='#tip-level']";
 edit.button_add_auto_name = "a[href='#add-title-auto']";
-edit.button_add_manually_name = "a[href='#add-title-manually']";
 edit.button_edit_name = "a[href='#edit-unit-save']";
 edit.button_edit_word_name = "a[href='#edit-word-save']";
 edit.button_edit_word_info_name = "a[href='#edit-word-url']";
@@ -61,6 +60,8 @@ edit.list_page = 1;
 edit.list_max = 9999;
 edit.edit_data_key = 0;
 edit.ajax_on = true;
+edit.tip_word_time = "";
+edit.tip_word_arr = new Array();
 //获取列表
 edit.get_list = function() {
     if (edit.ajax_on == true) {
@@ -106,7 +107,6 @@ edit.get_list = function() {
                         default:
                             $(edit.input_add_name).attr("value", "");
                             $(edit.input_add_name).attr("placeholder", "新的单词");
-                            $(edit.button_add_manually_name).show();
                             $(edit.button_add_auto_name).attr("data-toggle", "tooltip");
                             $(edit.button_add_auto_name).attr("title", "自动添加单词的相关信息");
                             $(edit.button_add_auto_name).tooltip();
@@ -118,7 +118,6 @@ edit.get_list = function() {
             }});
         //单词类表更新按钮事件
         if (edit.table_type !== "word") {
-            $(edit.button_add_manually_name).hide();
             $(edit.button_add_auto_name).tooltip("destroy");
             $(edit.button_add_auto_name).removeAttr("data-toggle");
             $(edit.button_add_auto_name).removeAttr("title");
@@ -145,12 +144,16 @@ edit.view = function() {
 edit.add = function(b) {
     var val = $(edit.input_add_name).val();
     if (val) {
+        message(3,"稍等","正在添加单词，请稍后……");
         edit.ajax_simple("add", {
             "title": val,
             "parent": edit.list_parent,
             "type": edit.table_type,
             "manually": b
         });
+        if(edit.table_type === 0){
+            $(edit.input_add_name).val("");
+        }
     }
 }
 //编辑操作
@@ -158,6 +161,7 @@ edit.edit = function() {
     var val = $(edit.input_edit_name).val();
     val_arr = edit.get_data_value(edit.edit_data_key);
     if (val && val_arr) {
+        message(3,"稍等","正在修改单词，请稍后……");
         edit.ajax_simple("edit", {
             "type": 0,
             "id": val_arr["id"],
@@ -169,29 +173,19 @@ edit.edit = function() {
 }
 //编辑单词信息操作
 edit.edit_word = function(t) {
+    val_arr = edit.get_data_value(edit.edit_data_key);
     if (t === 0) {
         var infos = {
             "word": $("#table-edit-info-word").val(),
             "img": $("#table-edit-info-img").val(),
-            "pho": $("#table-edit-info-pho").val()
+            "pho": $("#table-edit-info-pho").val(),
+            "voice": $("#table-edit-info-voice").val()
         }
         if (infos["word"] && infos["pho"]) {
-            infos["note"] = {"en":$("#table-edit-info-note-en").val(),"zh":$("#table-edit-info-note-zh").val()};
+            infos["note"] = {};
+            infos["note"][0] = {"en":$("#table-edit-info-note-en").val(),"zh":$("#table-edit-info-note-zh").val()};
             infos["des"] = {};
             infos["dict"] = {};
-            infos["voice"] = {};
-            //发音
-            t = 0;
-            $("#table-edit-info-voice > div > input").each(function(i, v) {
-                input_val = $(v).val();
-                if (input_val) {
-                    infos["voice"][t] = input_val;
-                    t++;
-                }
-            });
-            if (!infos["voice"][0]) {
-                infos["voice"][0] = "";
-            }
             //解释
             t = 0;
             $("#table-edit-info-des > div").each(function(i, v) {
@@ -227,13 +221,13 @@ edit.edit_word = function(t) {
             //发送URL
             edit.ajax_simple("edit", {
                 "type": 2,
+                "word": val_arr["post_title"],
                 "infos": infos
             });
         } else {
             message(2, "信息不完整！", "请输入单词的名称和音标！");
         }
     } else if (t === 1) {
-        val_arr = edit.get_data_value(edit.edit_data_key);
         if (val_arr) {
             edit.ajax_simple("edit", {
                 "type": 1,
@@ -253,6 +247,7 @@ edit.move = function(src_id, dest_id) {
 edit.set_mission = function() {
     val_arr = edit.get_data_value(edit.edit_data_key);
     if (val_arr) {
+        message(3,"稍等","正在设定课堂，请稍后……");
         edit.ajax_simple("set-mission", {
             "id": val_arr["id"]
         });
@@ -263,6 +258,7 @@ edit.del = function() {
     if (edit.edit_data_key) {
         val_arr = edit.get_data_value(edit.edit_data_key);
         if (val_arr) {
+            message(3,"稍等","正在删除单词，请稍后……");
             edit.ajax_simple("del", {
                 "id": val_arr["id"]
             });
@@ -332,54 +328,66 @@ edit.table_event_create = function() {
             if (val_arr["word"]) {
                 //查看
                 $("#table-view-info-word").html(val_arr["word"]["word"]);
-                $("#table-view-info-note-en").html(val_arr["word"]["note-en"]);
-                $("#table-view-info-note-zh").html(val_arr["word"]["note-zh"]);
+                if(val_arr["word"]["note"]){
+                    $("#table-view-info-note-en").html(val_arr["word"]["note"][0]['en']);
+                    $("#table-view-info-note-zh").html(val_arr["word"]["note"][0]['zh']);
+                }else{
+                    $("#table-view-info-note-en").html("");
+                    $("#table-view-info-note-zh").html("");
+                }
                 $("#table-view-info-pho").html(val_arr["word"]["pho"]);
+                $("#table-view-info-voice").html(val_arr["word"]["voice"]);
                 $("#table-view-info-des").html("");
-                for (var i = 0; i < val_arr["word"]["des"].length; i++) {
-                    $("#table-view-info-des").append("<p>" + val_arr["word"]["des"][i]["p"] + "&nbsp;&nbsp;" + val_arr["word"]["des"][i]["d"] + "</p>");
+                if(val_arr["word"]["des"]){
+                    for (var i = 0; i < val_arr["word"]["des"].length; i++) {
+                        $("#table-view-info-des").append("<p>" + val_arr["word"]["des"][i]["p"] + "&nbsp;&nbsp;" + val_arr["word"]["des"][i]["d"] + "</p>");
+                    }
                 }
                 $("#table-view-info-dict").html("");
-                for (var i = 0; i < val_arr["word"]["dict"].length; i++) {
-                    $("#table-view-info-dict").append("<p>" + val_arr["word"]["dict"][i]["en"] + "</p>" + "<p>&nbsp;&nbsp;" + val_arr["word"]["dict"][i]["zh"] + "</p>");
-                }
-                $("#table-view-info-voice").html("");
-                for (var i = 0; i < val_arr["word"]["voice"].length; i++) {
-                    $("#table-view-info-voice").append("<p>" + val_arr["word"]["voice"][i] + "</p>");
+                if(val_arr["word"]["dict"]){
+                    for (var i = 0; i < val_arr["word"]["dict"].length; i++) {
+                        $("#table-view-info-dict").append("<p>" + val_arr["word"]["dict"][i]["en"] + "</p>" + "<p>&nbsp;&nbsp;" + val_arr["word"]["dict"][i]["zh"] + "</p>");
+                    }
                 }
                 if (val_arr["word"]["img"]) {
-                    $("#table-view-info-img").html('<img src="' + val_arr["word"]["img"] + '" class="img-polaroid">');
+                    $("#table-view-info-img").html('<img src="do_img.php?word=' + val_arr["word"]["word"] + '" class="img-polaroid">');
                 } else {
-                    $("#table-view-info-img").html("...");
+                    $("#table-view-info-img").html("没有图片...");
                 }
                 //编辑
                 $("#table-edit-info-word").val(val_arr["word"]["word"]);
-                $("#table-edit-info-note-en").val(val_arr["word"]["note-en"]);
-                $("#table-edit-info-note-zh").val(val_arr["word"]["note-zh"]);
+                if(val_arr["word"]["note"]){
+                    $("#table-edit-info-note-en").val(val_arr["word"]["note"][0]['en']);
+                    $("#table-edit-info-note-zh").val(val_arr["word"]["note"][0]['zh']);
+                }else{
+                    $("#table-edit-info-note-en").html("");
+                    $("#table-edit-info-note-zh").html("");
+                }
                 $("#table-edit-info-pho").val(val_arr["word"]["pho"]);
+                $("#table-edit-info-voice").val(val_arr["word"]["voice"]);
                 $("#table-edit-info-pho ~ div").html(val_arr["word"]["pho"]);
                 $("#table-edit-info-des").html("");
-                for (var i = 0; i < val_arr["word"]["des"].length; i++) {
-                    edit.word_edit_add.des(val_arr["word"]["des"][i]["p"], val_arr["word"]["des"][i]["d"]);
+                if(val_arr["word"]["des"]){
+                    for (var i = 0; i < val_arr["word"]["des"].length; i++) {
+                        edit.word_edit_add.des(val_arr["word"]["des"][i]["p"], val_arr["word"]["des"][i]["d"]);
+                    }
                 }
                 $("#table-edit-info-dict").html("");
-                for (var i = 0; i < val_arr["word"]["dict"].length; i++) {
-                    edit.word_edit_add.dict(val_arr["word"]["dict"][i]["en"], val_arr["word"]["dict"][i]["zh"]);
-                }
-                $("#table-edit-info-voice").html("");
-                for (var i = 0; i < val_arr["word"]["voice"].length; i++) {
-                    edit.word_edit_add.voice(val_arr["word"]["voice"][i]);
+                if(val_arr["word"]["dict"]){
+                    for (var i = 0; i < val_arr["word"]["dict"].length; i++) {
+                        edit.word_edit_add.dict(val_arr["word"]["dict"][i]["en"], val_arr["word"]["dict"][i]["zh"]);
+                    }
                 }
                 $("#table-edit-info-img").val(val_arr["word"]["img"]);
             } else {
                 $("#table-view-info-word").html(val_arr["post_title"]);
-                $("#table-view-info-pho").html("");
-                $("#table-view-info-note-en").html("");
-                $("#table-view-info-note-zh").html("");
-                $("#table-view-info-des").html("");
-                $("#table-view-info-dict").html("");
-                $("#table-view-info-voice").html("");
-                $("#table-view-info-img").html("");
+                $("#table-view-info-pho").html("&nbsp;");
+                $("#table-view-info-note-en").html("&nbsp;");
+                $("#table-view-info-note-zh").html("&nbsp;");
+                $("#table-view-info-des").html("&nbsp;");
+                $("#table-view-info-dict").html("&nbsp;");
+                $("#table-view-info-voice").html("&nbsp;");
+                $("#table-view-info-img").html("&nbsp;");
                 $("#table-edit-info-word").val(val_arr["post_title"]);
                 $("#table-edit-info-note-en").html("");
                 $("#table-edit-info-note-zh").html("");
@@ -387,7 +395,7 @@ edit.table_event_create = function() {
                 $("#table-edit-info-pho ~ div").html("");
                 $("#table-edit-info-des").html("");
                 $("#table-edit-info-dict").html("");
-                $("#table-edit-info-voice").html("");
+                $("#table-edit-info-voice").val("");
                 $("#table-edit-info-img").html("");
             }
         }
@@ -503,6 +511,39 @@ edit.ajax_simple = function(url, post) {
         edit.message(data);
     }
 }
+//特殊提交数据-单词提示列表
+edit.ajax_word_like_list = function(word){
+    if (edit.ajax_on == true) {
+        edit.ajax_on = false;
+        $.ajax("do_word_list.php?word=" + word,{
+        "type": "GET",
+        "dataType": "json",
+        "complete": function(a, b) {
+            edit.ajax_on = true;
+        },
+        "success":function(data,t){
+            if(data["status"]){
+                for(i=0;i<data["status"].length;i++){
+                    add_word = data["status"][i];
+                    for(j=0;j<edit.tip_word_arr.length;j++){
+                        if(edit.tip_word_arr[j] == data["status"][i]){
+                            add_word = "";
+                        }
+                    }
+                    if(add_word){
+                        edit.tip_word_arr.push(add_word);
+                    }
+                }
+                if(edit.tip_word_arr.length > 100){
+                    edit.tip_word_arr.shift();
+                }
+                $(edit.input_add_name).typeahead({
+                    "source":edit.tip_word_arr
+                });
+            }
+        }});
+    }
+}
 //呼叫消息框
 edit.message = function(data) {
     var title = "";
@@ -570,13 +611,14 @@ $(document).ready(function() {
      * 内容初始化
      */
     $(edit.tip_name).data("html", $(edit.tip_name).html());
-    $(edit.button_add_manually_name).tooltip();
     //添加事件
     $(edit.button_add_auto_name).click(function() {
         edit.add(0);
     });
-    $(edit.button_add_manually_name).click(function() {
-        edit.add(1);
+    $(edit.input_add_name).keydown(function(event) {
+        if(event.keyCode == 13){
+            edit.add(0);
+        }
     });
     //编辑事件
     $(edit.button_edit_name).click(function() {
@@ -617,6 +659,19 @@ $(document).ready(function() {
         if (edit.table_type === 0) {
             upload_url = "../../do_upload.php?type=" + $(document).data("upload-type") + "&word=" + edit.get_data_value(edit.edit_data_key)["word"]["word"];
             $("#file_upload").uploadify("settings", "uploader", upload_url);
+        }
+    });
+    //添加单词提示事件
+    //$(edit.input_add_name).typeahead();
+    $(edit.input_add_name).keyup(function() {
+        clearTimeout(edit.tip_word_time);
+        if (edit.table_type === 0 && $(edit.input_add_name).val()) {
+            edit.tip_word_time = setTimeout("edit.ajax_word_like_list($(edit.input_add_name).val());",500);
+        }else{
+            /*
+            $(edit.input_add_name).typeahead({
+                "source":[]
+            });*/
         }
     });
     //获取列表

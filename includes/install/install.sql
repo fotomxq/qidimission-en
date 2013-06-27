@@ -1,10 +1,9 @@
-
 -- phpMyAdmin SQL Dump
 -- version 3.5.2.2
 -- http://www.phpmyadmin.net
 --
 -- 主机: 127.0.0.1
--- 生成日期: 2013 年 06 月 19 日 04:10
+-- 生成日期: 2013 年 06 月 27 日 03:07
 -- 服务器版本: 5.5.27
 -- PHP 版本: 5.4.7
 
@@ -22,13 +21,18 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `core_ip` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `ip_addr` varchar(39) COLLATE utf8_bin NOT NULL COMMENT 'IP地址',
-  `ip_ban` tinyint(1) NOT NULL COMMENT 'IP封锁状态',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  UNIQUE KEY `ip_addr` (`ip_addr`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `ip_addr` varchar(39) COLLATE utf8_bin NOT NULL COMMENT '地址',
+  `ip_ban` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否拉黑',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `core_ip`
+--
+
+INSERT INTO `core_ip` (`id`, `ip_addr`, `ip_ban`) VALUES
+(1, '::1', 0);
 
 -- --------------------------------------------------------
 
@@ -38,13 +42,18 @@ CREATE TABLE IF NOT EXISTS `core_ip` (
 
 CREATE TABLE IF NOT EXISTS `core_log` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `log_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
-  `log_ip` varchar(39) COLLATE utf8_bin NOT NULL COMMENT '宿主IP地址',
-  `log_message` text COLLATE utf8_bin NOT NULL COMMENT '描述消息',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `log_ip` (`log_ip`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+  `log_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `log_ip` varchar(39) COLLATE utf8_bin NOT NULL COMMENT 'Ip地址',
+  `log_message` text COLLATE utf8_bin NOT NULL COMMENT '消息',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `core_log`
+--
+
+INSERT INTO `core_log` (`id`, `log_date`, `log_ip`, `log_message`) VALUES
+(1, '2013-06-27 01:02:21', '::1', 0x646f5f6c6f67696e2e706870202d3e206c6f67696e20737563636573732e);
 
 -- --------------------------------------------------------
 
@@ -61,32 +70,16 @@ CREATE TABLE IF NOT EXISTS `mission_review` (
 -- --------------------------------------------------------
 
 --
--- 表的结构 `mission_word`
---
-
-CREATE TABLE IF NOT EXISTS `mission_word` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `word_parent` bigint(20) NOT NULL COMMENT '上级主键',
-  `word_name` text COLLATE utf8_bin NOT NULL COMMENT '名称',
-  `word_src` text COLLATE utf8_bin COMMENT '值',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- 表的结构 `sys_configs`
 --
 
 CREATE TABLE IF NOT EXISTS `sys_configs` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `config_name` varchar(300) COLLATE utf8_bin NOT NULL COMMENT '配置名称',
-  `config_value` text COLLATE utf8_bin NOT NULL COMMENT '配置值',
-  `config_default` text COLLATE utf8_bin NOT NULL COMMENT '默认值',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  UNIQUE KEY `config_name` (`config_name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12 ;
+  `config_value` text COLLATE utf8_bin COMMENT '配置值',
+  `config_default` text COLLATE utf8_bin COMMENT '默认值',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12 ;
 
 --
 -- 转存表中的数据 `sys_configs`
@@ -133,7 +126,15 @@ CREATE TABLE IF NOT EXISTS `sys_posts` (
   KEY `post_parent` (`post_parent`),
   KEY `post_user` (`post_user`),
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+
+--
+-- 转存表中的数据 `sys_posts`
+--
+
+INSERT INTO `sys_posts` (`id`, `post_title`, `post_content`, `post_date`, `post_modified`, `post_ip`, `post_type`, `post_order`, `post_parent`, `post_user`, `post_password`, `post_name`, `post_url`, `post_status`, `post_meta`) VALUES
+(1, '第1课', '', '2013-06-27 09:02:32', '2013-06-27 01:02:32', 1, 'class', 1, 0, 1, NULL, '', '', 'public', ''),
+(2, '第1单元', '', '2013-06-27 09:02:34', '2013-06-27 01:02:34', 1, 'unit', 2, 1, 1, NULL, '', '', 'public', '');
 
 -- --------------------------------------------------------
 
@@ -165,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
 --
 
 INSERT INTO `sys_user` (`id`, `user_username`, `user_password`, `user_email`, `user_name`, `user_group`, `user_date`, `user_login_date`, `user_ip`, `user_session`, `user_status`, `user_remember`) VALUES
-(1, 'admin', 'dd94709528bb1c83d08f3088d4043f4742891f4f', 'admin@admin.com', '管理员', 1, '2013-03-20 11:15:57', '2013-06-18 08:34:09', 0, 's0fg4gfrdbhkhkap5a60d1a7m2', 1, 0);
+(1, 'admin', 'dd94709528bb1c83d08f3088d4043f4742891f4f', 'admin@admin.com', '管理员', 1, '2013-03-20 11:15:57', '2013-06-27 09:02:21', 0, '7nlk26kjv3fmqv9jgseo7nn292', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -189,3 +190,21 @@ CREATE TABLE IF NOT EXISTS `sys_user_group` (
 
 INSERT INTO `sys_user_group` (`id`, `group_name`, `group_power`, `group_status`) VALUES
 (1, '管理员组', 0x61646d696e, 1);
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `word_info`
+--
+
+CREATE TABLE IF NOT EXISTS `word_info` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `info_word` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '单词',
+  `info_pho` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '音标',
+  `info_img` varchar(300) COLLATE utf8_bin NOT NULL COMMENT '图片文件地址',
+  `info_voice` varchar(300) COLLATE utf8_bin NOT NULL COMMENT '音频文件地址',
+  `info_des` text COLLATE utf8_bin NOT NULL COMMENT '解释',
+  `info_note` varchar(300) COLLATE utf8_bin NOT NULL COMMENT '注记',
+  `info_dict` text COLLATE utf8_bin NOT NULL COMMENT '例句',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;

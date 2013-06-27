@@ -40,10 +40,14 @@ if (!empty($_FILES) && isset($_GET['word']) == true && isset($_GET['type']) == t
             if (corefile::new_dir($dir_name) == true) {
                 $file_name = $dir_name . DS . time() . '_' . rand(1, 9999) . '.' . $fileParts['extension'];
                 move_uploaded_file($tempFile, $file_name);
-                if ($missionword->upload_file($_GET['word'], $file_name, $_GET['type']) == true) {
-                    echo 'ok.';
-                } else {
-                    echo 'cannot create data.';
+                $wordInfos = $missionword->getWordInfo($_GET['word']);
+                if ($wordInfos) {
+                    $wordInfos['img'] = $file_name;
+                    if ($missionword->saveWordInfo($wordInfos['word'], $wordInfos) == true) {
+                        echo 'ok.';
+                    } else {
+                        echo 'cannot create data.';
+                    }
                 }
             } else {
                 echo 'cannot read type.';

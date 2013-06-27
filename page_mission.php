@@ -54,7 +54,7 @@ if ($review_bool == true) {
 }
 //获取单词相关信息
 if ($word_word) {
-    $word_infos = $missionword->get($word_word);
+    $word_infos = $missionword->getWordInfo($word_word);
     //如果在学习模式末尾
     if ($missionview->section_end == true && $review_bool == false) {
         $missionreview->add($missionview->section_res['id']);
@@ -140,9 +140,9 @@ $url_next = $url . '&offset=' . $next_offset . $next_review . '&show=' . $show_m
             <a href="<?php echo $url; ?>&offset=1&next=1">本单元结束，是否继续学习？</a>
             <?php } } ?>
         </div>
-        <?php if($word_infos !== null){ if($word_infos['voice']){ foreach($word_infos['voice'] as $k=>$v){ ?>
-        <audio src="<?php echo $v; ?>" preload="auto"<?php if($k == 0){ echo ' autoplay="autoplay"'; } ?>></audio>
-        <?php } } } ?>
+        <?php if($word_infos !== null){ if($word_infos['voice']){ ?>
+        <audio src="<?php echo $word_infos['voice']; ?>" preload="auto" autoplay="autoplay"></audio>
+        <?php } } ?>
     </div>
     <!-- 音标和隐藏发音 结束 -->
     
@@ -221,7 +221,7 @@ $url_next = $url . '&offset=' . $next_offset . $next_review . '&show=' . $show_m
 <script>
     var offset = <?php echo $offset; ?>;
     var url_next = "<?php echo $url_next; ?>";
-    var info_note_en = "<?php if($word_infos !== null){ if(isset($word_infos['note-en']) == true){ echo $word_infos['note-en']; } } ?>";
-    var info_note_zh = "<?php if($word_infos !== null){ if(isset($word_infos['note-zh']) == true){ echo $word_infos['note-zh']; } } ?>";
+    var info_note_en = "<?php if($word_infos !== null){ if(isset($word_infos['note']) == true){ echo $word_infos['note'][0]['en']; } } ?>";
+    var info_note_zh = "<?php if($word_infos !== null){ if(isset($word_infos['note']) == true){ echo $word_infos['note'][0]['zh']; } } ?>";
 </script>
 <!-- 传递js变量 结束 -->

@@ -34,7 +34,7 @@ if (isset($_GET['mode']) == true) {
                 $res_level = $res_level ? $res_level : '';
                 if ($res && $_GET['type'] == '0') {
                     foreach ($res as $k => $v) {
-                        $res[$k]['word'] = $missionword->get($v['post_title']);
+                        $res[$k]['word'] = $missionword->getWordInfo($v['post_title']);
                     }
                 }
                 $status = array('res' => $res, 'row' => $res_row, 'level' => $res_level);
@@ -49,7 +49,7 @@ if (isset($_GET['mode']) == true) {
                     if ($_POST['manually']) {
                         $word_id = 1;
                     } else {
-                        $word_id = $missionword->add($_POST['title']);
+                        $word_id = $missionword->getWordInfo($_POST['title']);
                     }
                 } else {
                     $word_id = 1;
@@ -59,8 +59,9 @@ if (isset($_GET['mode']) == true) {
                     $status = $add_id > 0 ? '1' : '0';
                     $error = $status == '1' ? '添加成功。' : '无法添加，请稍候重试。';
                 } else {
-                    $status = '2';
-                    $error = '找不到该单词信息，请检查您输入的单词是否正确，或尝试手动添加单词。';
+                    $add_id = $missionview->add($_POST['title'], $_POST['type'], $_POST['parent']);
+                    $status = $add_id > 0 ? '1' : '0';
+                    $error = $status == '1' ? '本地词库和互联网词库均无法找到该单词，系统已自动转入手动添加模式，请稍后手动填入相关信息。' : '找不到单词信息，且无法添加该单词，请稍候重试。';
                 }
             }
             break;
@@ -71,14 +72,14 @@ if (isset($_GET['mode']) == true) {
                     case 1:
                         //从URL获取单词信息
                         if (isset($_POST['word']) == true) {
-                            $status = $missionword->refresh($_POST['word']) == true ? '1' : '0';
+                            $status = $missionword->getURLInfo($_POST['word']) == true ? '1' : '0';
                             $error = $status == '1' ? '单词的词条已经更新。' : '无法更新词条信息，可能是URL阻塞，请稍候再试。';
                         }
                         break;
                     case 2:
                         //编辑单词信息
-                        if (isset($_POST['infos']) == true) {
-                            $status = $missionword->edit($_POST['infos']) == true ? '1' : '0';
+                        if (isset($_POST['word']) == true && isset($_POST['infos']) == true) {
+                            $status = $missionword->saveWordInfo($_POST['word'],$_POST['infos']) == true ? '1' : '0';
                             $error = $status == '1' ? '修改单词成功。' : '无法修改单词信息，请稍候再试。';
                         }
                         break;

@@ -64,7 +64,7 @@ class coredb extends PDO {
         'user' => 'sys_user',
         'ugroup' => 'sys_user_group',
         'review'=>'mission_review',
-        'word'=>'mission_word');
+        'wordinfo'=>'word_info');
 
     /**
      * 初始化

@@ -45,8 +45,7 @@ require_once('glob_logged.php');
                         <th><input id="add-input" type="text" placeholder=""></th>
                         <th>
                             <div class="btn-group">
-                                <a class="btn btn-primary" href="#add-title-auto"><i class="icon-plus-sign icon-white"></i> 添加</a>
-                                <a class="btn hidden" href="#add-title-manually" data-toggle="tooltip" title="单词信息需要手动录入"><i class="icon-ok-sign"></i> 手动添加</a>
+                                <a class="btn btn-primary" href="#add-title-auto" data-provide="typeahead"><i class="icon-plus-sign icon-white"></i> 添加</a>
                             </div>
                         </th>
                     </tr>
@@ -85,7 +84,7 @@ require_once('glob_logged.php');
 <div id="table-edit-word" class="modal fade hide" tabindex="-1" role="dialog" aria-labelledby="table-edit-word-label" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="table-edit-word-label">查看单词</h3>
+        <h3 id="table-edit-word-label">编辑单词信息</h3>
     </div>
     <div class="modal-body">
         <dl class="dl-horizontal">
@@ -118,7 +117,7 @@ require_once('glob_logged.php');
             <dt>图片</dt>
             <dd><input type="text" id="table-edit-info-img" class="span5" value=""></dd>
             <dt>发音</dt>
-            <dd id="table-edit-info-voice"></dd>
+            <dd><input type="text" id="table-edit-info-voice" class="span5" value=""></dd>
             <dt>音标</dt>
             <dd><input type="text" id="table-edit-info-pho" value=""><div></div></dd>
             <dt>解释</dt>
@@ -133,7 +132,6 @@ require_once('glob_logged.php');
             <ul class="dropdown-menu">
                 <li><a href="#table-edit-des-add">添加解释</a></li>
                 <li><a href="#table-edit-dict-add">添加例句</a></li>
-                <li><a href="#table-edit-voice-add">添加语音</a></li>
             </ul>
         </div>
         <a class="btn btn-info" href="#edit-word-url" data-dismiss="modal" aria-hidden="true" title="不会删除已存在的单词信息">从互联网获取单词信息</a>
@@ -152,21 +150,21 @@ require_once('glob_logged.php');
     <div class="modal-body">
         <dl class="dl-horizontal">
             <dt>单词</dt>
-            <dd id="table-view-info-word"></dd>
+            <dd id="table-view-info-word">&nbsp;</dd>
             <dt>注记（英文）</dt>
-            <dd id="table-view-info-note-en"></dd>
+            <dd id="table-view-info-note-en">&nbsp;</dd>
             <dt>注记（中文）</dt>
-            <dd id="table-view-info-note-zh"></dd>
+            <dd id="table-view-info-note-zh">&nbsp;</dd>
             <dt>图片</dt>
-            <dd id="table-view-info-img"></dd>
+            <dd id="table-view-info-img">&nbsp;</dd>
             <dt>发音</dt>
-            <dd id="table-view-info-voice"></dd>
+            <dd id="table-view-info-voice">&nbsp;</dd>
             <dt>音标</dt>
-            <dd id="table-view-info-pho"></dd>
+            <dd id="table-view-info-pho">&nbsp;</dd>
             <dt>解释</dt>
-            <dd id="table-view-info-des"></dd>
+            <dd id="table-view-info-des">&nbsp;</dd>
             <dt>例句</dt>
-            <dd id="table-view-info-dict"></dd>
+            <dd id="table-view-info-dict">&nbsp;</dd>
         </dl>
     </div>
     <div class="modal-footer">

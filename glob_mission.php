@@ -32,7 +32,7 @@ require(DIR_LIB . DS . 'core-file.php');
  * 引入mission-word类
  */
 require(DIR_LIB . DS . 'mission-word.php');
-$missionword = new missionword($db);
+$missionword = new MissionWord($db);
 
 /**
  * 引入mission-view类
