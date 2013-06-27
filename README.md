@@ -7,7 +7,7 @@ qidimission-en
 介绍
 ===
 该平台为启迪教育平台，英语专用版。主要面向老师群体，您可以在个人或公共网络中部署该项目。
-使用了bootstrap界面，QQ词典API、爱词霸API，由于API请求频率限制，在使用“自动添加单词”和“从URL获取单词”功能时可能有较长时间延迟。
+使用了bootstrap界面，QQ词典API，由于API请求频率限制，在使用“从URL获取单词”功能时可能有较长时间延迟。
 
 
 安装
@@ -45,7 +45,6 @@ qidimission-en
 <p>该项目遵守<a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">Apache2.0协议</a>。</p>
 
 <p>词典公共API</p>
-<p> 爱词霸：http://dict-co.iciba.com/</p>
 <p> QQ词典：http://dict.qq.com</p>
 
 <p>Bootstrap声明</p>
