@@ -3,8 +3,9 @@
 /**
  * 备份和恢复模块
  * <p>需要：core-file、core-db支持</p>
+ * <p>注意，会用到coredb中的$tables变量。</p>
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package plugbackup
  */
 
@@ -18,111 +19,126 @@
  */
 function plugbackup(&$db, $backup_dir, $content_dir) {
     $return = '';
-    $bool = false;
-    $file_type = 'zip';
-    $ls_dir = $backup_dir . DS . substr(sha1(rand(1, 99999)), 0, 8);
-    if (!corefile::is_dir($ls_dir)) {
-        $ls_sql_dir = $ls_dir . DS . 'sql';
-        //创建临时目录
-        $bool = corefile::new_dir($ls_dir);
-        //创建临时SQL目录
-        if ($bool == true) {
-            $bool = corefile::new_dir($ls_sql_dir);
-        }
-        //拷贝文件数据
-        if ($bool == true) {
-            $bool = corefile::copy_dir($content_dir . DS . 'files', $ls_dir . DS . 'content' . DS . 'files');
-        }
-        if ($bool == true) {
-            $bool = corefile::copy_dir($content_dir . DS . 'logs', $ls_dir . DS . 'content' . DS . 'logs');
-        }
-        //依次遍历所有数据并拷贝到文件内
-        foreach ($db->tables as $k => $v) {
-            //创建表目录
-            $v_table_dir = $ls_sql_dir . DS . $v;
+    try {
+        $bool = false;
+        $file_type = 'zip';
+        $ls_dir = $backup_dir . DS . substr(sha1(rand(1, 99999)), 0, 8);
+        if (!corefile::is_dir($ls_dir)) {
+            $ls_sql_dir = $ls_dir . DS . 'sql';
+            //创建临时目录
+            $bool = corefile::new_dir($ls_dir);
+            //创建临时SQL目录
             if ($bool == true) {
-                $bool = corefile::new_dir($v_table_dir);
-            } else {
-                break;
+                $bool = corefile::new_dir($ls_sql_dir);
             }
-            //计算表内所有字段数据平均长度，得出最终步长
-            $max = 50;
+            //拷贝文件数据
             if ($bool == true) {
-                $sql = 'SELECT AVG( LENGTH(`' . implode('`))+AVG(LENGTH(`', $db->fields[$k]) . '`)) as al FROM `' . $v . '`';
-                $sth = $db->prepare($sql);
-                if ($sth->execute() == true) {
-                    $res = (int) $sth->fetchColumn();
-                    if ($res > 500) {
-                        $max = 20;
-                    } elseif ($res > 1000) {
-                        $max = 10;
-                    } elseif ($res > 5000) {
-                        $max = 1;
-                    }
+                $bool = corefile::copy_dir($content_dir . DS . 'files', $ls_dir . DS . 'content' . DS . 'files');
+            }
+            if ($bool == true) {
+                $bool = corefile::copy_dir($content_dir . DS . 'logs', $ls_dir . DS . 'content' . DS . 'logs');
+            }
+            //依次遍历所有数据并拷贝到文件内
+            foreach ($db->tables as $k => $v) {
+                //创建表目录
+                $v_table_dir = $ls_sql_dir . DS . $v;
+                if ($bool == true) {
+                    $bool = corefile::new_dir($v_table_dir);
                 } else {
-                    $bool = false;
                     break;
                 }
-            } else {
-                break;
-            }
-            //遍历数据写入文件
-            $p = 0;
-            $p_bool = true;
-            while ($p_bool) {
-                $sql = 'SELECT * FROM `' . $v . '` ORDER BY ' . $db->fields[$k][0] . ' ASC LIMIT ' . ($p * $max) . ',' . $max;
+                //获取表字段列表
+                $sql = 'SELECT * FROM `' . $v . '` LIMIT 1,1';
                 $sth = $db->prepare($sql);
                 if ($sth->execute() == true) {
-                    $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+                    $res = $sth->fetch(PDO::FETCH_ASSOC);
                     if ($res) {
-                        $file_content = 'INSERT INTO `' . $v . '`(`' . implode('`,`', array_keys($res[0])) . '`) VALUES';
-                        foreach ($res as $v_res) {
-                            $file_content .= '(';
-                            foreach ($v_res as $v_res_v) {
-                                if ($v_res_v == null) {
-                                    $file_content .= 'NULL,';
-                                } elseif (is_int($v_res_v) == true) {
-                                    $file_content .= $v_res_v . ',';
-                                } else {
-                                    $file_content .= '\'' . $v_res_v . '\',';
+                        $fields = array_keys($res);
+                        //计算表内所有字段数据平均长度，得出最终步长
+                        $max = 50;
+                        if ($bool == true) {
+                            $sql = 'SELECT AVG( LENGTH(`' . implode('`))+AVG(LENGTH(`', $fields) . '`)) as al FROM `' . $v . '`';
+                            $sth = $db->prepare($sql);
+                            if ($sth->execute() == true) {
+                                $res = (int) $sth->fetchColumn();
+                                if ($res > 500) {
+                                    $max = 20;
+                                } elseif ($res > 1000) {
+                                    $max = 10;
+                                } elseif ($res > 5000) {
+                                    $max = 1;
                                 }
+                            } else {
+                                $bool = false;
+                                break;
                             }
-                            $file_content = substr($file_content, 0, -1);
-                            $file_content .= '),';
+                        } else {
+                            break;
                         }
-                        $file_content = substr($file_content, 0, -1) . ';';
-                        $file_table_row = $v_table_dir . DS . $v . '_' . $p . '.sql';
-                        $p_bool = corefile::edit_file($file_table_row, $file_content);
-                        $bool = $p_bool;
-                        $file_content = null;
-                    } else {
-                        $p_bool = false;
-                        $bool = true;
+                        //遍历数据写入文件
+                        $p = 0;
+                        $p_bool = true;
+                        while ($p_bool) {
+                            $sql = 'SELECT * FROM `' . $v . '` ORDER BY ' . $fields[0] . ' ASC LIMIT ' . ($p * $max) . ',' . $max;
+                            $sth = $db->prepare($sql);
+                            if ($sth->execute() == true) {
+                                $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+                                if ($res) {
+                                    $file_content = 'INSERT INTO `' . $v . '`(`' . implode('`,`', array_keys($res[0])) . '`) VALUES';
+                                    foreach ($res as $v_res) {
+                                        $file_content .= '(';
+                                        foreach ($v_res as $v_res_v) {
+                                            if ($v_res_v == null) {
+                                                $file_content .= 'NULL,';
+                                            } elseif (is_int($v_res_v) == true) {
+                                                $file_content .= $v_res_v . ',';
+                                            } else {
+                                                $trans = array("'" => "\'", "\\'" => "\'");
+                                                $v_res_v = strtr($v_res_v, $trans);
+                                                $file_content .= '\'' . $v_res_v . '\',';
+                                            }
+                                        }
+                                        $file_content = substr($file_content, 0, -1);
+                                        $file_content .= '),';
+                                    }
+                                    $file_content = substr($file_content, 0, -1) . ';';
+                                    $file_table_row = $v_table_dir . DS . $v . '_' . $p . '.sql';
+                                    $p_bool = corefile::edit_file($file_table_row, $file_content);
+                                    $bool = $p_bool;
+                                    $file_content = null;
+                                } else {
+                                    $p_bool = false;
+                                    $bool = true;
+                                }
+                            } else {
+                                $p_bool = false;
+                                $bool = false;
+                            }
+                            $p += 1;
+                        }
                     }
-                } else {
-                    $p_bool = false;
-                    $bool = false;
                 }
-                $p += 1;
             }
         }
+        //将临时文件压缩为压缩包
+        $backup_file = $backup_dir . DS . date('YmdHis') . '_' . rand(1, 9999) . '.' . $file_type;
+        if (corefile::is_file($backup_file)) {
+            $bool = corefile::delete_file($backup_file);
+        }
+        if ($bool == true) {
+            $bool = corefile::create_zip($backup_file, $ls_dir);
+        }
+        if ($bool == true) {
+            $return = $backup_file;
+        } else {
+            //失败删除所有临时文件
+            corefile::delete_file($backup_file);
+        }
+        //删除临时文件
+        corefile::delete_dir($ls_dir);
+    } catch (Exception $e) {
+        
     }
-    //将临时文件压缩为压缩包
-    $backup_file = $backup_dir . DS . time() . '.' . $file_type;
-    if (corefile::is_file($backup_file)) {
-        $bool = corefile::delete_file($backup_file);
-    }
-    if ($bool == true) {
-        $bool = corefile::create_zip($backup_file, $ls_dir);
-    }
-    if ($bool == true) {
-        $return = $backup_file;
-    } else {
-        //失败删除所有临时文件
-        corefile::delete_file($backup_file);
-    }
-    //删除临时文件
-    corefile::delete_dir($ls_dir);
     return $return;
 }
 
@@ -131,10 +147,13 @@ function plugbackup(&$db, $backup_dir, $content_dir) {
  * @since 2
  * @param coredb $db
  * @param string $backup_file 备份的文件路径
+ * @param string $return_dir 临时处理目录
+ * @param string $content_dir 文件数据目录路径
  * @return boolean
  */
 function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
     $return = false;
+    //set_time_limit(1800);
     //清空return目录所有文件夹
     $dir_list = corefile::list_dir($return_dir, '*', GLOB_ONLYDIR);
     if ($dir_list) {

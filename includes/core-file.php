@@ -255,8 +255,8 @@ class corefile {
             $zip = new ZipArchive();
             if ($zip->open($zip_filename) === true) {
                 $return = $zip->extractTo($dest);
+                $zip->close();
             }
-            $zip->close();
         }
         return $return;
     }

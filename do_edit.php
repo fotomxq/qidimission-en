@@ -79,7 +79,7 @@ if (isset($_GET['mode']) == true) {
                     case 2:
                         //编辑单词信息
                         if (isset($_POST['word']) == true && isset($_POST['infos']) == true) {
-                            $status = $missionword->saveWordInfo($_POST['word'],$_POST['infos']) == true ? '1' : '0';
+                            $status = $missionword->saveWordInfo($_POST['word'], $_POST['infos']) == true ? '1' : '0';
                             $error = $status == '1' ? '修改单词成功。' : '无法修改单词信息，请稍候再试。';
                         }
                         break;
@@ -123,6 +123,45 @@ if (isset($_GET['mode']) == true) {
             if (isset($_POST['a']) == true) {
                 $status = $sysconfigs->save('USER_TIMEOUT', $_POST['a']) == true ? '1' : '0';
                 $error = $status == '1' ? '修改了系统设置。' : '无法修改系统设置，请稍后重试。';
+            }
+            break;
+        case 'backup':
+            set_time_limit(1800);
+            require(DIR_LIB . DS . 'plug-backup.php');
+            $backup_dir = DIR_DATA . DS . 'backup';
+            $return_dir = $backup_dir . DS . 'return';
+            //$_POST['return']存在并为列表键值，和$_POST['file']对应
+            if (isset($_POST['return']) == true && isset($_POST['file']) == true) {
+                //重新设定错误返回值
+                $status = '0';
+                $error = '无法还原数据库，请稍后重试。';
+                //获取文件列表，并和$_POST['file']对比是否相等
+                $fileList = corefile::list_dir($backup_dir, '*.zip');
+                if ($fileList) {
+                    sort($fileList);
+                    if (isset($fileList[$_POST['return']]) == true) {
+                        $getFileName = $backup_dir . DS . $_POST['file'];
+                        if ($fileList[$_POST['return']] == $getFileName) {
+                            $status = plugbackup_return($db, $getFileName, $return_dir, DIR_DATA) == true ? '1' : '0';
+                            $error = $status == '1' ? '还原成功！' : '无法还原数据库，请稍后重试。';
+                        }
+                    }
+                }
+            } else {
+                $status = plugbackup($db, $backup_dir, DIR_DATA) == true ? '1' : '0';
+                $error = $status == '1' ? '备份成功！' : '无法备份数据库，请稍后重试。';
+            }
+            break;
+        case 'backup-list':
+            $backup_dir = DIR_DATA . DS . 'backup';
+            $fileList = corefile::list_dir($backup_dir, '*.zip');
+            if ($fileList) {
+                sort($fileList);
+                foreach ($fileList as $k => $v) {
+                    $fileList[$k] = basename($v);
+                }
+                $status = $fileList;
+                $error = '';
             }
             break;
     }

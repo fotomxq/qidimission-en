@@ -568,6 +568,48 @@ edit.message = function(data) {
     message(status, title, data["error"]);
 }
 
+//备份
+edit.backup = new Object();
+//刷新备份列表
+edit.backup.list = function(lock){
+    if (edit.ajax_on == true) {
+        if(lock == true){
+            edit.ajax_on = false;
+        }
+        $("#system-operate-backup-list").html("");
+        $.ajax(edit.ajax_url + "backup-list",{
+        "type": "GET",
+        "dataType": "json",
+        "complete": function(a, b) {
+            edit.ajax_on = true;
+        },
+        "success":function(data,t){
+            if(data["status"]){
+                for(i=0;i<data["status"].length;i++){
+                    $("#system-operate-backup-list").append('<option data-key="'+i+'">'+data["status"][i]+'</option>');
+                }
+            }
+        }});
+    }
+}
+//备份操作
+edit.backup.backup = function() {
+    message(2, "备份提示", "备份数据需要很多时间，在此期间请耐心等待...");
+    edit.ajax_simple("backup", {});
+    edit.backup.list(true);
+}
+//还原操作
+edit.backup.re = function() {
+    message(2, "还原中", "还原数据需要非常长的时间，且还原后可能需要重新登陆，请耐心等待...");
+    var selectObj = $("#system-operate-backup-list");
+    if (selectObj) {
+        edit.ajax_simple("backup", {
+            "return": $("#system-operate-backup-list > option:contains('"+selectObj.val()+"')").attr("data-key"),
+            "file": selectObj.val()
+        });
+    }
+}
+
 //开始加载执行
 $(document).ready(function() {
     //消息框全局变量
@@ -674,6 +716,15 @@ $(document).ready(function() {
             });*/
         }
     });
+    //备份和还原按钮事件
+    $('a[href="#system-operate-backup"]').click(function(){
+        edit.backup.backup();
+    });
+    $('a[href="#system-operate-backup-return"]').click(function(){
+        edit.backup.re();
+    });
+    //获取备份列表
+    edit.backup.list(false);
     //获取列表
     edit.get_list();
 });

@@ -204,10 +204,24 @@ require_once('glob_logged.php');
                     <input class="span2" id="system-operate-config-a" type="text" value="<?php echo $sysconfigs->load('USER_TIMEOUT'); ?>">
                 </div>
             </dd>
+            <hr>
             <dt>高级选项</dt>
             <dd>
                 <div class="btn-group">
                     <a class="btn btn-warning" href="#system-operate-review-clear" data-dismiss="modal" aria-hidden="true">清空复习数据</a>
+                </div>
+                <p>&nbsp;</p>
+            </dd>
+            <hr>
+            <dt>备份和还原</dt>
+            <dd>
+                <div class="input-group">
+                    <a class="btn btn-primary" href="#system-operate-backup" data-dismiss="modal" aria-hidden="true"><i class="icon-retweet icon-white"></i> 备份数据库</a>
+                </div>
+                <p>&nbsp;</p>
+                <div class="input-append">
+                    <select id="system-operate-backup-list" class="input-medium"></select>
+                    <a class="btn btn-warning" href="#system-operate-backup-return" data-dismiss="modal" aria-hidden="true"><i class="icon-share-alt icon-white"></i> 还原</a>
                 </div>
             </dd>
         </dl>
