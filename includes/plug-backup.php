@@ -40,6 +40,10 @@ function plugbackup(&$db, $backup_dir, $content_dir) {
             }
             //依次遍历所有数据并拷贝到文件内
             foreach ($db->tables as $k => $v) {
+                //不动用户和用户组部分
+                if ($k == 'user' || $k == 'ugroup') {
+                    continue;
+                }
                 //创建表目录
                 $v_table_dir = $ls_sql_dir . DS . $v;
                 if ($bool == true) {
@@ -188,10 +192,15 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
                 break;
             }
         }
-        foreach ($db->tables as $v) {
-            if (corefile::is_dir($v_dirs[1] . DS . $v) == false) {
-                $return = false;
-                break;
+        foreach ($db->tables as $k => $v) {
+            //不动用户和用户组部分
+            if ($k == 'user' || $k == 'ugroup') {
+                continue;
+            } else {
+                if (corefile::is_dir($v_dirs[1] . DS . $v) == false) {
+                    $return = false;
+                    break;
+                }
             }
         }
     }
@@ -214,26 +223,36 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
     //清空所有表
     if ($return == true) {
         $sql = 'TRUNCATE ';
-        foreach ($db->tables as $v) {
-            if ($db->exec($sql . $v) === false) {
-                $return = false;
-                break;
+        foreach ($db->tables as $k => $v) {
+            //不动用户和用户组部分
+            if ($k == 'user' || $k == 'ugroup') {
+                continue;
+            } else {
+                if ($db->exec($sql . $v) === false) {
+                    $return = false;
+                    break;
+                }
             }
         }
     }
     //根据文件次序执行sql
     if ($return == true) {
-        foreach ($db->tables as $v) {
-            $v_table_dir = $ls_dir . DS . 'sql' . DS . $v;
-            $dir_list = corefile::list_dir($v_table_dir, '*.sql');
-            if ($dir_list) {
-                foreach ($dir_list as $v_i) {
-                    $i_content = corefile::read_file($v_i);
-                    if ($db->exec($i_content) === false) {
-                        $return = false;
-                        break;
+        foreach ($db->tables as $k => $v) {
+            //不动用户和用户组部分
+            if ($k == 'user' || $k == 'ugroup') {
+                continue;
+            } else {
+                $v_table_dir = $ls_dir . DS . 'sql' . DS . $v;
+                $dir_list = corefile::list_dir($v_table_dir, '*.sql');
+                if ($dir_list) {
+                    foreach ($dir_list as $v_i) {
+                        $i_content = corefile::read_file($v_i);
+                        if ($db->exec($i_content) === false) {
+                            $return = false;
+                            break;
+                        }
+                        $i_content = null;
                     }
-                    $i_content = null;
                 }
             }
         }

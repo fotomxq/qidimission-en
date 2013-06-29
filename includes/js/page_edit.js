@@ -584,10 +584,12 @@ edit.backup.list = function(lock){
             edit.ajax_on = true;
         },
         "success":function(data,t){
-            if(data["status"]){
+            if(data["status"] != "2"){
                 for(i=0;i<data["status"].length;i++){
                     $("#system-operate-backup-list").append('<option data-key="'+i+'">'+data["status"][i]+'</option>');
                 }
+            }else{
+                $("#system-operate-backup-list").html('<option data-key="0">无备份</option>');
             }
         }});
     }
@@ -722,6 +724,10 @@ $(document).ready(function() {
     });
     $('a[href="#system-operate-backup-return"]').click(function(){
         edit.backup.re();
+    });
+    //当打开菜单时获取备份文件列表
+    $('a[href="#system-operate"]').click(function(){
+        edit.backup.list(true);
     });
     //获取备份列表
     edit.backup.list(false);
