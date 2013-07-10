@@ -3,7 +3,7 @@
 /**
  * 获取单词信息
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package mission
  */
 class MissionWord {
@@ -106,7 +106,7 @@ class MissionWord {
                 return true;
             }
         } else {
-            $wordId = $this->addQueryInfo($word, $sql, '', '', '', '', '');
+            $wordId = $this->addQueryInfo($word, $infos['pho'], '', '', '', '', '');
             if ($wordId > 0) {
                 if ($autoURL == true) {
                     return $this->getURLInfo($word);
@@ -294,18 +294,18 @@ class MissionWord {
      * @return int 单词信息ID
      */
     private function addQueryInfo($word, $pho, $img, $voice, $des, $note, $dict) {
-        $sql = 'INSERT INTO `' . $this->tableNameInfo . '`(`id`,`info_word`,`info_pho`,`info_img`,`info_voice`,`info_des`,`info_note`,`info_dict`) VALUES(NULL,:word,:pho,:img,:voice,:des,:note,:dict)';
+        $sql = 'INSERT INTO `' . $this->tableName . '`(`id`,`info_word`,`info_pho`,`info_img`,`info_voice`,`info_des`,`info_note`,`info_dict`) VALUES(NULL,:word,:pho,:img,:voice,:des,:note,:dict)';
         $sth = $this->db->prepare($sql);
-        $sth->bindParam(':word', $word, PDO::PARAM_STR);
-        $sth->bindParam(':pho', $pho, PDO::PARAM_STR);
-        $sth->bindParam(':img', $img, PDO::PARAM_STR);
-        $sth->bindParam(':voice', $voice, PDO::PARAM_STR);
+        $sth->bindParam(':word', $word, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $sth->bindParam(':pho', $pho, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $sth->bindParam(':img', $img, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
+        $sth->bindParam(':voice', $voice, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $des = $this->getGroupStr('des', $des);
-        $sth->bindParam(':des', $des, PDO::PARAM_STR);
+        $sth->bindParam(':des', $des, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $note = $this->getGroupStr('note', $note);
-        $sth->bindParam(':note', $note, PDO::PARAM_STR);
+        $sth->bindParam(':note', $note, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         $dict = $this->getGroupStr('dict', $dict);
-        $sth->bindParam(':dict', $dict, PDO::PARAM_STR);
+        $sth->bindParam(':dict', $dict, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT);
         if ($sth->execute() == true) {
             return $this->db->lastInsertId();
         }

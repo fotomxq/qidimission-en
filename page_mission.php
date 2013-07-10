@@ -103,6 +103,7 @@ if ($next_review == true) {
     $next_review = '&review=1';
 }
 $url_next = $url . '&offset=' . $next_offset . $next_review . '&show=' . $show_mode;
+$url_next_nooffset = $url . $next_review . '&show=' . $show_mode;
 ?>
 <div class="container">
     <!-- 顶部位置提示 -->
@@ -157,7 +158,7 @@ $url_next = $url . '&offset=' . $next_offset . $next_review . '&show=' . $show_m
             <p class="info-des"><?php echo $v['p'].'&nbsp;&nbsp;'.$v['d']; ?></p>
             <?php } } ?>
             <p>&nbsp;</p>
-            <?php if($word_infos['dict']){ $dict_keys = array_rand($word_infos['dict'],$dict_num); if(is_array($dict_keys) == true){ foreach($dict_keys as $v){ ?>
+            <?php if(($show_mode == $show_mode_arr[2]) && $word_infos['dict']){ $dict_keys = array_rand($word_infos['dict'],$dict_num); if(is_array($dict_keys) == true){ foreach($dict_keys as $v){ ?>
             <p class="info-dict"><?php if(isset($word_infos['dict'][$v]['en']) == true) echo $word_infos['dict'][$v]['en']; ?></p>
             <p class="info-dict"><?php if(isset($word_infos['dict'][$v]['zh']) == true) echo '&nbsp;&nbsp;'.$word_infos['dict'][$v]['zh']; ?></p>
             <?php } }else{ ?>
@@ -215,6 +216,7 @@ $url_next = $url . '&offset=' . $next_offset . $next_review . '&show=' . $show_m
 <script>
     var offset = <?php echo $offset; ?>;
     var url_next = "<?php echo $url_next; ?>";
+    var url_next_nooffset = "<?php echo $url_next_nooffset; ?>";
     var info_note_en = "<?php if($word_infos !== null){ if(isset($word_infos['note']) == true){ echo $word_infos['note'][0]['en']; } } ?>";
     var info_note_zh = "<?php if($word_infos !== null){ if(isset($word_infos['note']) == true){ echo $word_infos['note'][0]['zh']; } } ?>";
 </script>

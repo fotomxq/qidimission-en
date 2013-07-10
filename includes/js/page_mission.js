@@ -16,18 +16,30 @@ function set_note() {
 $(document).ready(function() {
     //重置按钮组位置
     var buttons_postion = (($(document).width() - 960) / 2) - 150;
+    if(buttons_postion < 0){
+        buttons_postion = 0;
+    }
     $("#buttons").css("right",buttons_postion+"px");
     //按键事件监听
     $(document).keypress(function(key) {
         key_code = key.keyCode;
         if (key_code == 32 || key_code == 13) {
-            window.location = "init.php?mode=mission&offset=" + (offset + 1);
+            window.location = url_next_nooffset+"&offset="+(offset+1);
         }
     });
     //浮动按钮组根据滚动条移动
     $(window).scroll(function() {
         var scroll_top = Math.abs($(document).scrollTop());
         $("#buttons").css("top", scroll_top + 200 + "px");
+    });
+    //按钮组半隐藏状态
+    $("#buttons").fadeTo("fast",0.3);
+    $('#buttons').hover(function(){
+        $("#buttons").stop();
+        $("#buttons").fadeTo("fast",1);
+    },function(){
+        $("#buttons").stop();
+        $("#buttons").fadeTo("fast",0.3);
     });
     //按钮选单弹出
     $("#buttons_next").hover(function(){
