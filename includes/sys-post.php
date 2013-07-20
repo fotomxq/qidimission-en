@@ -20,7 +20,7 @@ class syspost {
      * @since 1
      * @var string 
      */
-    private $table_name;
+    public $table_name;
 
     /**
      * 数据库操作句柄

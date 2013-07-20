@@ -28,6 +28,8 @@ if (isset($_GET['mode']) == true) {
         case 'list':
             //获取列表
             if (isset($_GET['parent']) == true && isset($_GET['type']) == true && isset($_GET['page']) == true && isset($_GET['max']) == true) {
+                /**
+                 * 替换为插件获取列表
                 $res = $missionview->view_list($_GET['parent'], $_GET['type'], $_GET['page'], $_GET['max']);
                 $res_row = $missionview->view_list_row($_GET['parent'], $_GET['type']);
                 $res_level = $missionview->view_level($_GET['parent']);
@@ -37,6 +39,13 @@ if (isset($_GET['mode']) == true) {
                         $res[$k]['word'] = $missionword->getWordInfo($v['post_title']);
                     }
                 }
+                 */
+                require(DIR_LIB . DS . 'plug-wordlist.php');
+                $plugWordList = new PlugWordList($missionview, $missionword);
+                $res = $plugWordList->getList($_GET['parent'], $_GET['type'], $_GET['page'], $_GET['max']);
+                $res_row = $missionview->view_list_row($_GET['parent'], $_GET['type']);
+                $res_level = $missionview->view_level($_GET['parent']);
+                $res_level = $res_level ? $res_level : '';
                 $status = array('res' => $res, 'row' => $res_row, 'level' => $res_level);
                 $error = '';
             }

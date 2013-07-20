@@ -327,58 +327,54 @@ edit.table_event_create = function() {
         if (edit.table_type == 0) {
             if (val_arr["word"]) {
                 //查看
-                $("#table-view-info-word").html(val_arr["word"]["word"]);
-                if(val_arr["word"]["note"]){
-                    $("#table-view-info-note-en").html(val_arr["word"]["note"][0]['en']);
-                    $("#table-view-info-note-zh").html(val_arr["word"]["note"][0]['zh']);
+                $("#table-view-info-word").html(val_arr["word"]);
+                if(val_arr["note"]){
+                    $("#table-view-info-note-en").html(val_arr["note"][0]['en']);
+                    $("#table-view-info-note-zh").html(val_arr["note"][0]['zh']);
                 }else{
                     $("#table-view-info-note-en").html("");
                     $("#table-view-info-note-zh").html("");
                 }
-                $("#table-view-info-pho").html(val_arr["word"]["pho"]);
-                $("#table-view-info-voice").html(val_arr["word"]["voice"]);
+                $("#table-view-info-pho").html(val_arr["pho"]);
+                $("#table-view-info-voice").html(val_arr["voice"]);
                 $("#table-view-info-des").html("");
-                if(val_arr["word"]["des"]){
-                    for (var i = 0; i < val_arr["word"]["des"].length; i++) {
-                        $("#table-view-info-des").append("<p>" + val_arr["word"]["des"][i]["p"] + "&nbsp;&nbsp;" + val_arr["word"]["des"][i]["d"] + "</p>");
+                if(val_arr["des"]){
+                    for (var i = 0; i < val_arr["des"].length; i++) {
+                        $("#table-view-info-des").append("<p>" + val_arr["des"][i]["p"] + "&nbsp;&nbsp;" + val_arr["des"][i]["d"] + "</p>");
                     }
                 }
                 $("#table-view-info-dict").html("");
-                if(val_arr["word"]["dict"]){
-                    for (var i = 0; i < val_arr["word"]["dict"].length; i++) {
-                        $("#table-view-info-dict").append("<p>" + val_arr["word"]["dict"][i]["en"] + "</p>" + "<p>&nbsp;&nbsp;" + val_arr["word"]["dict"][i]["zh"] + "</p>");
+                if(val_arr["dict"]){
+                    for (var i = 0; i < val_arr["dict"].length; i++) {
+                        $("#table-view-info-dict").append("<p>" + val_arr["dict"][i]["en"] + "</p>" + "<p>&nbsp;&nbsp;" + val_arr["dict"][i]["zh"] + "</p>");
                     }
                 }
-                if (val_arr["word"]["img"]) {
-                    $("#table-view-info-img").html('<img src="do_img.php?word=' + val_arr["word"]["word"] + '" class="img-polaroid">');
-                } else {
-                    $("#table-view-info-img").html("没有图片...");
-                }
+                $("#table-view-info-img").html('<img src="do_img.php?word=' + val_arr["word"] + '" class="img-polaroid">');
                 //编辑
-                $("#table-edit-info-word").val(val_arr["word"]["word"]);
-                if(val_arr["word"]["note"]){
-                    $("#table-edit-info-note-en").val(val_arr["word"]["note"][0]['en']);
-                    $("#table-edit-info-note-zh").val(val_arr["word"]["note"][0]['zh']);
+                $("#table-edit-info-word").val(val_arr["word"]);
+                if(val_arr["note"]){
+                    $("#table-edit-info-note-en").val(val_arr["note"][0]['en']);
+                    $("#table-edit-info-note-zh").val(val_arr["note"][0]['zh']);
                 }else{
                     $("#table-edit-info-note-en").html("");
                     $("#table-edit-info-note-zh").html("");
                 }
-                $("#table-edit-info-pho").val(val_arr["word"]["pho"]);
-                $("#table-edit-info-voice").val(val_arr["word"]["voice"]);
-                $("#table-edit-info-pho ~ div").html(val_arr["word"]["pho"]);
+                $("#table-edit-info-pho").val(val_arr["pho"]);
+                $("#table-edit-info-voice").val(val_arr["voice"]);
+                $("#table-edit-info-pho ~ div").html(val_arr["pho"]);
                 $("#table-edit-info-des").html("");
-                if(val_arr["word"]["des"]){
-                    for (var i = 0; i < val_arr["word"]["des"].length; i++) {
-                        edit.word_edit_add.des(val_arr["word"]["des"][i]["p"], val_arr["word"]["des"][i]["d"]);
+                if(val_arr["des"]){
+                    for (var i = 0; i < val_arr["des"].length; i++) {
+                        edit.word_edit_add.des(val_arr["des"][i]["p"], val_arr["des"][i]["d"]);
                     }
                 }
                 $("#table-edit-info-dict").html("");
-                if(val_arr["word"]["dict"]){
-                    for (var i = 0; i < val_arr["word"]["dict"].length; i++) {
-                        edit.word_edit_add.dict(val_arr["word"]["dict"][i]["en"], val_arr["word"]["dict"][i]["zh"]);
+                if(val_arr["dict"]){
+                    for (var i = 0; i < val_arr["dict"].length; i++) {
+                        edit.word_edit_add.dict(val_arr["dict"][i]["en"], val_arr["dict"][i]["zh"]);
                     }
                 }
-                $("#table-edit-info-img").val(val_arr["word"]["img"]);
+                $("#table-edit-info-img").val(val_arr["img"]);
             } else {
                 $("#table-view-info-word").html(val_arr["post_title"]);
                 $("#table-view-info-pho").html("&nbsp;");
@@ -701,7 +697,7 @@ $(document).ready(function() {
     $("#table-edit-word").on("shown", function() {
         //上传框架URL更新
         if (edit.table_type === 0) {
-            upload_url = "../../do_upload.php?type=" + $(document).data("upload-type") + "&word=" + edit.get_data_value(edit.edit_data_key)["word"]["word"];
+            upload_url = "../../do_upload.php?type=" + $(document).data("upload-type") + "&word=" + edit.get_data_value(edit.edit_data_key)["word"];
             $("#file_upload").uploadify("settings", "uploader", upload_url);
         }
     });

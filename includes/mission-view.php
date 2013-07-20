@@ -12,7 +12,7 @@ class missionview {
      * syspost实例引用句柄
      * @var syspost 
      */
-    private $post;
+    public $post;
 
     /**
      * sysconfigs实例引用句柄

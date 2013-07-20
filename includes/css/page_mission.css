@@ -14,7 +14,7 @@
     line-height: 70px;
 }
 .info-img{
-    background: url(../img/noimg_bg.png);
+    /*background: url(../img/noimg_bg.png);*/
     background-repeat: repeat;
     max-width: 300px;
     max-height: 300px;

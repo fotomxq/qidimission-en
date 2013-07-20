@@ -12,13 +12,13 @@ class MissionWord {
      * 单词表名称
      * @var string 
      */
-    private $tableName;
+    public $tableName;
 
     /**
      * 数据库操作句柄
      * @var coredb 
      */
-    private $db;
+    public $db;
 
     /**
      * 组键值字符串
@@ -344,7 +344,7 @@ class MissionWord {
      * @param string $value 组信息字符串
      * @return array 信息数组
      */
-    private function getGroupArr($value) {
+    public function getGroupArr($value) {
         if ($value != '') {
             $valArr = explode('||', $value);
             if ($valArr) {
