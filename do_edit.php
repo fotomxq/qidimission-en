@@ -3,7 +3,7 @@
 /**
  * 编辑ajax操作
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package page
  */
 /**
@@ -87,8 +87,9 @@ if (isset($_GET['mode']) == true) {
                         break;
                     case 2:
                         //编辑单词信息
-                        if (isset($_POST['word']) == true && isset($_POST['infos']) == true) {
-                            $status = $missionword->saveWordInfo($_POST['word'], $_POST['infos']) == true ? '1' : '0';
+                        if (isset($_POST['id']) == true && isset($_POST['word']) == true && isset($_POST['infos']) == true) {
+                            $status = $missionview->edit($_POST['id'], $_POST['infos']['word']) == true ? '1' : '0';
+                            $status = $missionword->saveWordInfo($_POST['infos']['word'], $_POST['infos']) == true ? '1' : '0';
                             $error = $status == '1' ? '修改单词成功。' : '无法修改单词信息，请稍候再试。';
                         }
                         break;

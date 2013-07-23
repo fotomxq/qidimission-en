@@ -221,6 +221,7 @@ edit.edit_word = function(t) {
             //发送URL
             edit.ajax_simple("edit", {
                 "type": 2,
+                "id": val_arr["id"],
                 "word": val_arr["post_title"],
                 "infos": infos
             });

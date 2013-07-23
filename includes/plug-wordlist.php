@@ -49,9 +49,11 @@ class PlugWordList {
                 $res = $sth->fetchAll(PDO::FETCH_ASSOC);
                 if ($res) {
                     foreach ($res as $k => $v) {
-                        $res[$k]['des'] = $this->missionWord->getGroupArr($v['des']);
-                        $res[$k]['note'] = $this->missionWord->getGroupArr($v['note']);
-                        $res[$k]['dict'] = $this->missionWord->getGroupArr($v['dict']);
+                        if ($v['word']) {
+                            $res[$k]['des'] = $this->missionWord->getGroupArr($v['des']);
+                            $res[$k]['note'] = $this->missionWord->getGroupArr($v['note']);
+                            $res[$k]['dict'] = $this->missionWord->getGroupArr($v['dict']);
+                        }
                     }
                 }
                 return $res;
