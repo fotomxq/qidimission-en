@@ -26,7 +26,7 @@ qidimission-en
 ===
 * PHP 5.4.7
 * Mysql 5.5.27
-* IE 7+ / Chrome
+* IE 9+ / Chrome
 
 
 默认登录口令
@@ -37,8 +37,7 @@ qidimission-en
 
 更新日志
 ===
-<p>- 2013.6.20</p>
-<p>    创建了该项目。</p>
+<p><a href="https://github.com/fotomxq/qidimission-en/commits/master">查看更新日志</a></p>
 
 协议和声明
 ===
