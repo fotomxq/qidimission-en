@@ -16,11 +16,11 @@ $db_dns = 'mysql:host=localhost;dbname=qidimission;charset=utf8';
 /**
  * 数据库连接用户名
  */
-$db_username = 'root';
+$db_username = 'admin';
 /**
  * 数据库连接密码
  */
-$db_password = 'root';
+$db_password = 'admin';
 /**
  * 编码<br/>
  * PHP某些版本不支持PDO DNS直接设定编码，所以需要单独再设定一次。

@@ -32,11 +32,11 @@ function plugbackup(&$db, $backup_dir, $content_dir) {
                 $bool = corefile::new_dir($ls_sql_dir);
             }
             //拷贝文件数据
-            if ($bool == true) {
-                $bool = corefile::copy_dir($content_dir . DS . 'files', $ls_dir . DS . 'content' . DS . 'files');
-            }
-            if ($bool == true) {
-                $bool = corefile::copy_dir($content_dir . DS . 'logs', $ls_dir . DS . 'content' . DS . 'logs');
+            $copyDir = array('files', 'logs', 'word-images');
+            foreach ($copyDir as $v) {
+                if ($bool == true) {
+                    $bool = corefile::copy_dir($content_dir . DS . $v, $ls_dir . DS . 'content' . DS . $v);
+                }
             }
             //依次遍历所有数据并拷贝到文件内
             foreach ($db->tables as $k => $v) {
@@ -185,7 +185,7 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
     }
     //检查数据是否正确
     if ($return == true) {
-        $v_dirs = array($ls_dir . DS . 'content', $ls_dir . DS . 'sql', $ls_dir . DS . 'content' . DS . 'files', $ls_dir . DS . 'content' . DS . 'logs');
+        $v_dirs = array($ls_dir . DS . 'content', $ls_dir . DS . 'sql', $ls_dir . DS . 'content' . DS . 'files', $ls_dir . DS . 'content' . DS . 'logs', $ls_dir . DS . 'content' . DS . 'word-images');
         foreach ($v_dirs as $v) {
             if (corefile::is_dir($v) == false) {
                 $return = false;
@@ -204,20 +204,17 @@ function plugbackup_return(&$db, $backup_file, $return_dir, $content_dir) {
             }
         }
     }
+    //还原目录列
+    $copyDir = array('files', 'logs', 'word-images');
     //删除现有数据
-    if ($return == true) {
-        if (corefile::delete_dir($content_dir . DS . 'files') == true && corefile::delete_dir($content_dir . DS . 'logs') == true) {
-            $return = true;
-        } else {
+    foreach ($copyDir as $v) {
+        if ($return == true) {
             $return = false;
-        }
-    }
-    //拷贝备份数据
-    if ($return == true) {
-        if (corefile::copy_dir($ls_dir . DS . 'content' . DS . 'files', $content_dir . DS . 'files') == true && corefile::copy_dir($ls_dir . DS . 'content' . DS . 'logs', $content_dir . DS . 'logs') == true) {
-            $return = true;
-        } else {
-            $return = false;
+            if (corefile::delete_dir($content_dir . DS . $v) == true) {
+                if (corefile::copy_dir($ls_dir . DS . 'content' . DS . $v, $content_dir . DS . $v) == true) {
+                    $return = true;
+                }
+            }
         }
     }
     //清空所有表

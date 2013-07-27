@@ -6,14 +6,14 @@
  * @version 2
  * @package page
  */
-
 /**
  * 定义全局路径
  * @since 1
  */
 define('DS', '/');
-define('DIR_LIB', 'includes');
-define('DIR_DATA', 'content');
+define('DIR_ROOT', dirname(__FILE__) . DS);
+define('DIR_LIB', DIR_ROOT . 'includes');
+define('DIR_DATA', DIR_ROOT . 'content');
 
 /**
  * 设定时区
@@ -96,5 +96,5 @@ $log = new corelog($ip_arr['addr'], $db, true);
  * 获取网站URL
  * @since 1
  */
-$web_url = 'http://localhost/qidimission';
+$web_url = 'http://localhost';
 ?>
