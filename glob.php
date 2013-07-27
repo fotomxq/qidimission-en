@@ -96,5 +96,5 @@ $log = new corelog($ip_arr['addr'], $db, true);
  * 获取网站URL
  * @since 1
  */
-$web_url = $sysconfigs->load('WEB_URL');
+$web_url = 'http://localhost/qidimission';
 ?>
