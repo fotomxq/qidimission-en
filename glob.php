@@ -3,7 +3,7 @@
 /**
  * 所有脚本引用页
  * @author fotomxq <fotomxq.me>
- * @version 2
+ * @version 3
  * @package page
  */
 /**
@@ -91,10 +91,4 @@ $ip_arr = $coreip->get_ip();
  */
 require(DIR_LIB . DS . 'core-log.php');
 $log = new corelog($ip_arr['addr'], $db, true);
-
-/**
- * 获取网站URL
- * @since 1
- */
-$web_url = 'http://localhost';
 ?>

@@ -2,7 +2,7 @@
 /**
  * 登录页面
  * @author fotomxq <fotomxq.me>
- * @version 1
+ * @version 2
  * @package page
  */
 require('glob_page.php');
@@ -30,7 +30,7 @@ $status = $user->status($ip_arr['id'], (int) $sysconfigs->load('USER_TIMEOUT'));
         <meta name="author" content="<?php echo $page_meta_author; ?>">
 
         <!-- Le styles -->
-        <link href="<?php echo $web_url; ?>/includes/css/bootstrap.css" rel="stylesheet">
+        <link href="includes/css/bootstrap.css" rel="stylesheet">
         <style type="text/css">
             body {
                 padding-top: 40px;
@@ -68,17 +68,17 @@ $status = $user->status($ip_arr['id'], (int) $sysconfigs->load('USER_TIMEOUT'));
             }
 
         </style>
-        <link href="<?php echo $web_url; ?>/includes/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="includes/css/bootstrap-responsive.css" rel="stylesheet">
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
-          <script src="<?php echo $web_url; ?>/includes/js/html5shiv.js"></script>
+          <script src="includes/js/html5shiv.js"></script>
         <![endif]-->
         <!-- Fav and touch icons -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?php echo $web_url; ?>/includes/img/logo-144.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo $web_url; ?>/includes/img/logo-114.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo $web_url; ?>/includes/img/logo-72.png">
-        <link rel="apple-touch-icon-precomposed" href="<?php echo $web_url; ?>/includes/img/logo-57.png">
-        <link rel="shortcut icon" href="<?php echo $web_url; ?>/includes/img/favicon.ico">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="includes/img/logo-144.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="includes/img/logo-114.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="includes/img/logo-72.png">
+        <link rel="apple-touch-icon-precomposed" href="includes/img/logo-57.png">
+        <link rel="shortcut icon" href="includes/img/favicon.ico">
     </head>
 
     <body>
@@ -106,8 +106,8 @@ $status = $user->status($ip_arr['id'], (int) $sysconfigs->load('USER_TIMEOUT'));
         </div> <!-- /container -->
 
         <!-- javascript -->
-        <script src="<?php echo $web_url; ?>/includes/js/jquery.js"></script>
-        <script src="<?php echo $web_url; ?>/includes/js/bootstrap.js"></script>
+        <script src="includes/js/jquery.js"></script>
+        <script src="includes/js/bootstrap.js"></script>
         <?php if($status == true){ ?>
         <script type="text/javascript">
                 function tourl_init(){
